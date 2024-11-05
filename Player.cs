@@ -9,10 +9,10 @@ public class Player : MonoBehaviour
     CharacterController karakter = null;
     //Yürüme hızı
     [SerializeField]
-    float yurumeHizi = 100f;
+    float yurumeHizi = 4f;
     //mouse (fare) hassasiyeti. Bunu artırırsak fare hızı artar.
     [SerializeField]
-    float fareHassasiyet = 500f;
+    float fareHassasiyet = 300f;
     //yer çekimi miktarı
     [SerializeField]
     float yerCekimi = -0.05f;
