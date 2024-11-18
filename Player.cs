@@ -9,19 +9,19 @@ public class Player : MonoBehaviour
     CharacterController karakter = null;
     //Yürüme hızı
     [SerializeField]
-    float yurumeHizi = 4f;
+    float yurumeHizi = 6f;
     //mouse (fare) hassasiyeti. Bunu artırırsak fare hızı artar.
     [SerializeField]
-    float fareHassasiyet = 300f;
+    float fareHassasiyet = 3f;
     //yer çekimi miktarı
     [SerializeField]
-    float yerCekimi = -0.05f;
+    float yerCekimi = -0.02f;
 
     //karakterin Y yönündeki hareket miktarını belirten değişken
     float dikeyHareketMiktar = 0;
     //ziplama gücü [SerializeField] bunun editör ekranından düzenlenmesini sağlar.
     [SerializeField]
-    float ziplamaGucu = 4;
+    float ziplamaGucu = 2;
 
 
     //Bu metot oyun başladığında 1 kez çalışır.
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
         //önce farenin sağ sol yöndeki hareketini al ve bunu hassasiyet değeri ile çarp.
         var mouseX = Input.GetAxis("Mouse X") * fareHassasiyet;
         //sağ sol yöndeki haret miktarınca karakteri Y ekseni etrafında döndür.
-        transform.Rotate(0, mouseX*Time.deltaTime, 0);
+        transform.Rotate(0, mouseX , 0);
 
         //YUKARI AŞAĞI BAKMA KISMI
 
@@ -50,14 +50,14 @@ public class Player : MonoBehaviour
         //Ancak harekt yönü ters olduğu için bunu bir de -1 ile çarpıp tersine çevir.
         var mouseY = Input.GetAxis("Mouse Y") * fareHassasiyet * -1;
         // Kamerayı X ekseni etrafında döndür
-        Camera.main.transform.Rotate(mouseY*Time.deltaTime, 0, 0);
+        Camera.main.transform.Rotate(mouseY , 0, 0);
 
 
         //YÜRÜME BÖLÜMÜ
         if (Input.GetKey(KeyCode.W))
         {
             //Eğer W basılı ise yürüme hızını ileri yön ile çarp ve hareket ettir.
-            karakter.Move(transform.forward * yurumeHizi*Time.deltaTime);
+            karakter.Move(transform.forward * yurumeHizi * Time.deltaTime);
         }
         else if (Input.GetKey(KeyCode.S))
         {
@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
         else if (Input.GetKey(KeyCode.D))
         {
             //sağ hareket yukarıdaki gibi
-            karakter.Move(transform.right * yurumeHizi*Time.deltaTime);
+            karakter.Move(transform.right * yurumeHizi * Time.deltaTime);
         }
         else if (Input.GetKey(KeyCode.A))
         {
@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
             karakter.Move(transform.right * yurumeHizi * -1 * Time.deltaTime);
         }
         //dikey hareketi gerçekleştir.
-        karakter.Move(new Vector3(0, dikeyHareketMiktar, 0*Time.deltaTime));
+        karakter.Move(new Vector3(0, dikeyHareketMiktar, 0 * Time.deltaTime));
 
         //ZIPLAMA
         if (karakter.isGrounded)
@@ -89,9 +89,9 @@ public class Player : MonoBehaviour
         }
 
         //yukarı hareket yönü eğer yerçekiminden büyük ise onu sürekli olarak azalt.
-        if (dikeyHareketMiktar>yerCekimi)
+        if (dikeyHareketMiktar > yerCekimi)
         {
-            dikeyHareketMiktar = dikeyHareketMiktar - Mathf.Abs(yerCekimi/6);
+            dikeyHareketMiktar = dikeyHareketMiktar - Mathf.Abs(yerCekimi / 50);
         }
     }
 }
