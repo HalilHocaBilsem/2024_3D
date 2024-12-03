@@ -14,18 +14,24 @@ public class Kup : MonoBehaviour
     void Update()
     {
 
-
-        if (Input.GetMouseButton(0))
+        if (Input.GetKeyUp(KeyCode.K))
         {
-            var isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-            RaycastHit carpilanNesne;
 
-            var carptiMi = Physics.Raycast(isin, out carpilanNesne, 4);
+            var isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+            RaycastHit carpanNesne;
+
+            bool carptiMi = Physics.Raycast(isin, out carpanNesne, 5);
 
             if (carptiMi == true)
             {
-                carpilanNesne.rigidbody.AddForce(Camera.main.transform.forward * 5, ForceMode.VelocityChange);
+                if (carpanNesne.rigidbody != null)
+                {
+                    carpanNesne.rigidbody.AddForce(Camera.main.transform.forward*5, ForceMode.VelocityChange);
+                }
+
+
             }
+
         }
 
     }
