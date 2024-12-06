@@ -4,35 +4,22 @@ using UnityEngine;
 
 public class Kup : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
-
-        if (Input.GetKeyUp(KeyCode.K))
+        //eğer kullanıcı K tuşuna basarsa
+        if (Input.GetKeyDown(KeyCode.K)==true)
         {
-
-            var isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-            RaycastHit carpanNesne;
-
-            bool carptiMi = Physics.Raycast(isin, out carpanNesne, 5);
-
-            if (carptiMi == true)
+            Ray isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+            RaycastHit carpilanNesne;
+            if (Physics.Raycast(isin, out carpilanNesne, 5)==true)
             {
-                if (carpanNesne.rigidbody != null)
+                if (carpilanNesne.rigidbody!=null)
                 {
-                    carpanNesne.rigidbody.AddForce(Camera.main.transform.forward*5, ForceMode.VelocityChange);
+                    carpilanNesne.rigidbody.AddForce(Camera.main.transform.forward * 5, ForceMode.VelocityChange);
                 }
-
-
             }
-
         }
-
+       
     }
 }
