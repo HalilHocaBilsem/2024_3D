@@ -1,0 +1,35 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class Tasi : MonoBehaviour
+{
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            var isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+            RaycastHit carpilanNesne;
+
+            if (Physics.Raycast(isin, out carpilanNesne, 4))
+            {
+                var nesne = carpilanNesne.collider.gameObject;
+                if (nesne== this.gameObject)
+                {
+                    if (nesne.transform.parent==null)
+                    {
+                        nesne.transform.parent=Camera.main.transform;
+                        carpilanNesne.rigidbody.isKinematic = true;
+                    }
+                    else
+                    {
+                        nesne.transform.parent = null;
+                        carpilanNesne.rigidbody.isKinematic=false;
+                    }
+                }
+            }
+        }
+    }
+}
