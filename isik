@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class isik : MonoBehaviour
+{
+
+    public Light lamba;
+   
+        
+
+
+    void Update()
+    {
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+
+            Ray isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+            RaycastHit carpanNesne;
+
+            if (Physics.Raycast(isin, out carpanNesne, 5) == true)
+            {
+                if (carpanNesne.collider.gameObject== this.gameObject)
+                {
+                    if (lamba.enabled == true)
+                    {
+                        lamba.enabled = false;
+                       
+                    }
+                    else if (lamba.enabled == false)
+                    {
+                        lamba.enabled = true;
+                       
+                    }
+                }
+            }
+
+
+
+        }
+
+    }
+}
