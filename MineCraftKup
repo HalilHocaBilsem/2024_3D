@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.XR;
+
+public class MineCraft : MonoBehaviour
+{
+
+
+
+
+
+    public GameObject kupPrefab;
+
+
+    private void Start()
+    {
+        // Oyunun başında farenin gizlenmesini sağlar
+        Cursor.visible = false;
+        // Oyuncunun fareyi hareket ettirmesine izin verir
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+
+
+    void Update()
+    {
+
+        Ray isin=new Ray(Camera.main.transform.position,Camera.main.transform.forward);
+        RaycastHit hit;
+        if(Physics.Raycast(isin, out hit, 20))
+        {
+
+            if(hit.collider.gameObject.tag=="MineCraft")
+            {
+                if (Input.GetMouseButtonDown(0)) 
+                { 
+                
+                    Instantiate(kupPrefab, hit.transform.position+hit.normal, Quaternion.identity);
+                }
+                else if(Input.GetMouseButtonDown(1))
+                {
+                    Destroy(hit.collider.gameObject);
+                }
+            }
+
+        }
+
+       
+    }
+}
