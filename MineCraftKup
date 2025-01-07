@@ -1,24 +1,109 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.XR;
 
 public class MineCraft : MonoBehaviour
 {
 
-
-
-
-
+    public Texture2D map;
     public GameObject kupPrefab;
-
+    public GameObject kupKonum; //yeni
 
     private void Start()
-    {
-        // Oyunun başında farenin gizlenmesini sağlar
+    {        // Oyunun başında farenin gizlenmesini sağlar
         Cursor.visible = false;
         // Oyuncunun fareyi hareket ettirmesine izin verir
         Cursor.lockState = CursorLockMode.Locked;
+        KupOlustur(); //yeni
+
+
+    }
+
+    void KupOlustur() //yeni
+    {
+        var k = kupKonum.transform.position;
+        for (int x = 0; x < map.width; x++)
+        {
+            for (int z = 0; z < map.height; z++)
+            {
+                var pixel = map.GetPixel(x, z);
+                var grilik = pixel.grayscale;
+                var yukseklik = System.MathF.Round(grilik, 1) * 10;
+
+                var yeniKup = Instantiate(kupPrefab);
+                yeniKup.transform.position = new Vector3(k.x + x, k.y + yukseklik, k.z + z);
+
+                yeniKup.transform.parent = kupKonum.transform;
+            }
+
+        }
+
+    }
+
+    void Kaydet()
+    {
+        var sb = new StringBuilder();
+
+        for (int i = 0; i < kupKonum.transform.childCount; i++)
+        {
+            var kup = kupKonum.transform.GetChild(i);
+            var kupYeri = kup.transform.position;
+
+            var kupYeriMetin = kupYeri.x + ";" + kupYeri.y + ";" + kupYeri.z;
+            sb.Append(kupYeriMetin + Environment.NewLine);
+        }
+
+        System.IO.File.WriteAllText("harita.txt", sb.ToString());
+    }
+
+
+
+    void Yukle()
+    {
+        // First, clear all child objects under kupKonum
+        // We use a more efficient way of clearing the children using a while loop (to prevent changing the collection during iteration)
+        int childCount = kupKonum.transform.childCount;
+        for (int i = 0; i < childCount; i++)
+        {
+            Transform child = kupKonum.transform.GetChild(0); // Always get the first child, since the count will decrease as we destroy
+            Destroy(child.gameObject);
+        }
+
+        // Read the entire map data from the file
+        string haritaMetni = System.IO.File.ReadAllText("harita.txt");
+
+        // Split the text into lines using a more optimized method (avoiding `Environment.NewLine`).
+        var satirlar = haritaMetni.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+        // Caching current culture to avoid recalculating it multiple times
+        var c = System.Globalization.CultureInfo.CurrentCulture;
+
+        // Batch process lines in the file
+        foreach (var satir in satirlar)
+        {
+            if (satir.Length > 3)
+            {
+                // We process each line in a single loop to reduce overhead
+                string[] konumlar = satir.Split(';');
+
+                // Try to parse the position values, and only instantiate if valid
+                if (konumlar.Length == 3 &&
+                    float.TryParse(konumlar[0], System.Globalization.NumberStyles.Float, c, out float x) &&
+                    float.TryParse(konumlar[1], System.Globalization.NumberStyles.Float, c, out float y) &&
+                    float.TryParse(konumlar[2], System.Globalization.NumberStyles.Float, c, out float z))
+                {
+                    // Create the block only if valid data is parsed
+                    var yeniKup = Instantiate(kupPrefab);
+                    yeniKup.transform.SetParent(kupKonum.transform, false); // Avoid re-parenting with world positions
+
+                    // Set the position directly
+                    yeniKup.transform.position = new Vector3(x, y, z);
+                }
+            }
+        }
     }
 
 
@@ -26,19 +111,20 @@ public class MineCraft : MonoBehaviour
     void Update()
     {
 
-        Ray isin=new Ray(Camera.main.transform.position,Camera.main.transform.forward);
+        Ray isin = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         RaycastHit hit;
-        if(Physics.Raycast(isin, out hit, 20))
+        if (Physics.Raycast(isin, out hit, 20))
         {
 
-            if(hit.collider.gameObject.tag=="MineCraft")
+            if (hit.collider.gameObject.tag == "MineCraft")
             {
-                if (Input.GetMouseButtonDown(0)) 
-                { 
-                
-                    Instantiate(kupPrefab, hit.transform.position+hit.normal, Quaternion.identity);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    var yenikup = Instantiate(kupPrefab, hit.transform.position + hit.normal, Quaternion.identity);
+                    yenikup.transform.parent = kupKonum.transform;
+
                 }
-                else if(Input.GetMouseButtonDown(1))
+                else if (Input.GetMouseButtonDown(1))
                 {
                     Destroy(hit.collider.gameObject);
                 }
@@ -46,6 +132,14 @@ public class MineCraft : MonoBehaviour
 
         }
 
-       
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S))
+        {
+            Kaydet();
+        }
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
+        {
+            Yukle();
+        }
+
     }
 }
