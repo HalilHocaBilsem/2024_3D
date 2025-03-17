@@ -1,55 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 
 /// <summary>
-/// Bu scripti zombi nesnesine atayın. 
-/// Zombinin kafa kısmını scripte atamanız gerekecektir.
+/// Zombi nesnesinde çalıştırılacak koddur.
+/// Zombinin hasar alması için fırlatılan topun top tagine sahip olması gerekir.
+/// Zombi kafası scripte tanımlanmalıdır.
 /// </summary>
 public class Zombi : MonoBehaviour
 {
-    //zombi kafa objesi
+
     public GameObject kafa;
-
-
     public int Can = 100;
     public bool CanliMi = true;
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "mermi")
-        {
-            Can -= 20;
 
-        }
-        var silah = collision.gameObject.GetComponent<Silah>();
-        if (silah != null)
-        {
-            Can -= silah.Hasar;
-        }
-        if (Can <= 0)
-        {
-            CanliMi = false;
-            var rb = GetComponent<Rigidbody>();
-            rb.constraints = RigidbodyConstraints.None;
-        }
-    }
+
     void Update()
     {
-        if (CanliMi)
+        if (CanliMi==false)
         {
-
-            // Kafayı kameraya döndür
-            Vector3 direction = Camera.main.transform.position - kafa.transform.position;
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            kafa.transform.rotation = Quaternion.RotateTowards(kafa.transform.rotation, targetRotation, 70f * Time.deltaTime); // 
-
-
-
-            // Zombiyi oyuncuya yaklaştır.
-            this.gameObject.transform.position = Vector3.Lerp(this.gameObject.transform.position, Camera.main.transform.position, 0.4f * Time.deltaTime); 
+            return;
         }
+
+        Vector3 directionToCamera = Camera.main.transform.position - transform.position;
+
+        // Sadece Y ekseninde dönme işlemi yapılacak
+        directionToCamera.y = 0;
+
+        // Objeyi kameraya doğru yavaşça döndür
+        Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+
+        // Yavaşça dönüş
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 50 * Time.deltaTime);
+
+
+        var ortaNokta =Vector3.Lerp(this.transform.position, Camera.main.transform.position,0.9f* Time.deltaTime);
+        this.transform.position=ortaNokta;
     }
 
+   
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag=="top")
+        {
+            Can -= 5;
+            if (Can<=0)
+            {
+                CanliMi = false;
+        var rb=GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.None;
+            }
+        }
+    }
 }
